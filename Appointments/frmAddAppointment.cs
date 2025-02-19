@@ -391,7 +391,11 @@ namespace Hospital_Management_System.Appointments
 
         private void llblPEC_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            pnlEmergencyContactInfo.Visible = true;
+            if (_SelectedPatient.EmergemcyContactInfo != null)
+                pnlEmergencyContactInfo.Visible = true;
+            else
+                MessageBox.Show("This Patient Doesn't Has Any Emergency Contact Info To Show", "Not Found", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
         }
 
         private void llblEditDoctorInfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -437,7 +441,24 @@ namespace Hospital_Management_System.Appointments
         private void btnSave_Click(object sender, EventArgs e)
         {
             clsAppointments appointment = new clsAppointments();
-            if (_Appointment.AppointmentID != -1)
+
+            int ActiveAppID = clsAppointments.CheckIfPatientHasActiveApp(_SelectedPatient.PatientID);
+            if (ActiveAppID != -1)
+            {
+                if(MessageBox.Show($"Selected Patient Has An Active Appointment With ID : [ {ActiveAppID} ]Do You Want To Cancel This Appointment ?",
+                                    "Patient Has Another Appointment",MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    return;
+                }
+                else
+                {
+                    clsAppointments app = clsAppointments.FindByAppointmentID(ActiveAppID);
+                    app.Status = 3;
+                    app.Save();
+                }
+            }
+
+                if (_Appointment.AppointmentID != -1)
                 appointment = _Appointment;
             appointment.PatientID = _SelectedPatient.PatientID;
             appointment.DoctorID = _SelectedDoctor.DoctorID;

@@ -9,13 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using clsBussinessLayer;
+using System.Drawing.Drawing2D;
 using System.Security.Cryptography;
 
 namespace Hospital_Management_System.Appointments
 {
-    public partial class frmAppointments : Form
+    public partial class frmAppointmentsList : Form
     {
-        public frmAppointments()
+        public frmAppointmentsList()
         {
             InitializeComponent();
         }
@@ -25,49 +26,36 @@ namespace Hospital_Management_System.Appointments
         private int _AppID = -1;
         private clsAppointments _AppInfo = null;
 
+        private Dictionary<int, Image> patientImages = new Dictionary<int, Image>();
+        private Dictionary<int, Image> doctorImages = new Dictionary<int, Image>();
+
         private void frmAppointments_Load(object sender, EventArgs e)
         {
             cbxStatus.Visible = false;
-            
             _LoadDataToList();
-
             gbxFilterBy.Visible = false;
-
-            
+            LoadAppointmentImages();
         }
 
         private void _LoadDataToList()
         {
             _Appointments = clsAppointments.GetAllAppointments();
             dgvAppointments.DataSource = _Appointments;
-            if( _Appointments.Rows.Count > 0 )
+            if (_Appointments.Rows.Count > 0)
             {
-            _AppID = Convert.ToInt32(dgvAppointments.CurrentCell.Value);
-            _AppInfo = clsAppointments.FindByAppointmentID(_AppID);
+                _AppID = Convert.ToInt32(dgvAppointments.CurrentCell.Value);
+                _AppInfo = clsAppointments.FindByAppointmentID(_AppID);
+            }
+            else
+            {
 
             }
-            lblNumOfAppointments.Text = (dgvAppointments.Rows.Count).ToString();
             cbxStatus.SelectedIndex = 0;
-        }
-
-        
-
-        private void frmAppointments_Resize(object sender, EventArgs e)
-        {
-
         }
 
         private void pbxSearchFilter_Click(object sender, EventArgs e)
         {
-            if(gbxFilterBy.Visible)
-                gbxFilterBy.Visible = false;
-            else
-                gbxFilterBy.Visible = true;
-        }
-
-        private void rbtnGendor_CheckedChanged(object sender, EventArgs e)
-        {
-            
+            gbxFilterBy.Visible = !gbxFilterBy.Visible;
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -82,7 +70,7 @@ namespace Hospital_Management_System.Appointments
             Guna.UI2.WinForms.Guna2RadioButton radioButton = (Guna.UI2.WinForms.Guna2RadioButton)sender;
             string rbtnText = radioButton.Text;
 
-            switch(rbtnText)
+            switch (rbtnText)
             {
                 case "Patient Name":
                     txtSearchBar.PlaceholderText = "Enter Patient's Name";
@@ -103,73 +91,43 @@ namespace Hospital_Management_System.Appointments
                     break;
             }
 
-            if(radioButton.Tag != null)
+            ToggleFilterVisibility(radioButton.Tag?.ToString());
+        }
+
+        private void ToggleFilterVisibility(string tag)
+        {
+            if (tag == "Status")
             {
-                if(radioButton.Tag.ToString() == "Status")
-                {
-                    string[] Status = {"Noun","Scheduled", "Confirmed", "Pending", "Cancelled by Patient", "Cancelled by Doctor", "Rescheduled", "Completed", "Missed" };
-                    cbxStatus.DataSource = Status;
-                    if (cbxStatus.Visible)
-                    {
-                        cbxStatus.Visible = false;
-                        txtSearchBar.Visible = true;
-                    }
-                    else
-                    {
-                        cbxStatus.Visible = true;
-                        txtSearchBar.Visible = false;
-                    }
-                }
-                else if(radioButton.Tag.ToString() == "Department")
-                {
-                    List<string> Specializations = new List<string>();
-
-                    Specializations.Add("Noun");
-
-                    List<string> sp = clsSpecializations.GetAllSpecializationName();
-
-                    foreach (string s in sp)
-                    {
-                        Specializations.Add(s);
-                    }
-
-                    cbxStatus.DataSource = Specializations;
-                    if (cbxStatus.Visible)
-                    {
-                        cbxStatus.Visible = false;
-                        txtSearchBar.Visible = true;
-                    }
-                    else
-                    {
-                        cbxStatus.Visible = true;
-                        txtSearchBar.Visible = false;
-                    }
-                }
-
+                string[] Status = { "Noun", "Scheduled", "Confirmed", "Pending", "Cancelled by Patient", "Cancelled by Doctor", "Rescheduled", "Completed", "Missed" };
+                cbxStatus.DataSource = Status;
+                cbxStatus.Visible = !cbxStatus.Visible;
+                txtSearchBar.Visible = !cbxStatus.Visible;
             }
-           
-
+            else if (tag == "Department")
+            {
+                List<string> Specializations = new List<string> { "Noun" };
+                Specializations.AddRange(clsSpecializations.GetAllSpecializationName());
+                cbxStatus.DataSource = Specializations;
+                cbxStatus.Visible = !cbxStatus.Visible;
+                txtSearchBar.Visible = !cbxStatus.Visible;
+            }
         }
 
         private void txtSearchBar_TextChanged(object sender, EventArgs e)
         {
-            if (_FilterText == "" || _FilterText == "Noun")
+            if (string.IsNullOrEmpty(_FilterText) || _FilterText == "Noun")
+            {
                 _Appointments.DefaultView.RowFilter = "";
-                
+            }
             else if (_FilterText == "Status" || _FilterText == "Department")
             {
-                if (cbxStatus.Text == "Noun")
-                    _Appointments.DefaultView.RowFilter = "";
-                else
-                    _Appointments.DefaultView.RowFilter = string.Format("[{0}] = '{1}'", _FilterText, cbxStatus.Text);
-
+                _Appointments.DefaultView.RowFilter = cbxStatus.Text == "Noun" ? "" : $"[{_FilterText}] = '{cbxStatus.Text}'";
             }
             else
-                _Appointments.DefaultView.RowFilter = string.Format("[{0}] LIKE '{1}%'", _FilterText, txtSearchBar.Text.Trim());
+            {
+                _Appointments.DefaultView.RowFilter = $"[{_FilterText}] LIKE '{txtSearchBar.Text.Trim()}%'";
+            }
 
-            lblNumOfAppointments.Text = (dgvAppointments.Rows.Count).ToString();
-
-            
         }
 
         private void txtSearchBar_Click(object sender, EventArgs e)
@@ -180,29 +138,19 @@ namespace Hospital_Management_System.Appointments
             }
         }
 
-        // Dictionary to store preloaded images
-
-        private Dictionary<int, Image> patientImages = new Dictionary<int, Image>();
-        private Dictionary<int, Image> doctorImages = new Dictionary<int, Image>();
-
-        //Method to load images once at the beginning
         private void LoadAppointmentImages()
         {
             foreach (DataGridViewRow row in dgvAppointments.Rows)
             {
-                if (row.Cells[0].Value == null) continue; 
+                if (row.Cells[0].Value == null) continue;
 
                 int appointmentID = Convert.ToInt32(row.Cells[0].Value);
                 clsAppointments appointment = clsAppointments.FindByAppointmentID(appointmentID);
-
-                //Load patient image only if it hasn't been loaded before
 
                 if (!patientImages.ContainsKey(appointment.PatientsInfo.PersonInfo.PersonID))
                 {
                     patientImages[appointment.PatientsInfo.PersonInfo.PersonID] = LoadImage(appointment.PatientsInfo.PersonInfo.ImagePath);
                 }
-
-                // Load doctor image only if it hasn't been loaded before
 
                 if (!doctorImages.ContainsKey(appointment.DoctorsInfo.PersonInfo.PersonID))
                 {
@@ -220,10 +168,8 @@ namespace Hospital_Management_System.Appointments
                     return CropToSquare(original, 30);
                 }
             }
-            return CropToSquare(Properties.Resources.Patient_128, 30); 
+            return CropToSquare(Properties.Resources.Patient_128, 30);
         }
-
-        // Method to crop an image into a square shape
 
         private Image CropToSquare(Image original, int size)
         {
@@ -239,26 +185,30 @@ namespace Hospital_Management_System.Appointments
             return croppedImage;
         }
 
-        // Optimize CellPainting event for better performance
         private void dgvAppointments_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            if (e.RowIndex < 0) return; 
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
 
-            int appointmentID;
-            if (!int.TryParse(dgvAppointments.Rows[e.RowIndex].Cells[0].Value?.ToString(), out appointmentID))
-                return; //Avoid NullReferenceException by verifying appointment ID
-
-            LoadAppointmentImages();
+            if (!int.TryParse(dgvAppointments.Rows[e.RowIndex].Cells[0].Value?.ToString(), out int appointmentID))
+                return;
 
             clsAppointments appointment = clsAppointments.FindByAppointmentID(appointmentID);
 
+            if (appointment == null) return;
+
             if (e.ColumnIndex == dgvAppointments.Columns["Patient Name"].Index)
             {
-                DrawCellWithImage(e, Image.FromFile(appointment.PatientsInfo.PersonInfo.ImagePath), appointment.PatientsInfo.PersonInfo.FullName);
+                if (patientImages.TryGetValue(appointment.PatientsInfo.PersonInfo.PersonID, out Image patientImage))
+                {
+                    DrawCellWithImage(e, patientImage, appointment.PatientsInfo.PersonInfo.FullName);
+                }
             }
             else if (e.ColumnIndex == dgvAppointments.Columns["Doctor Name"].Index)
             {
-                DrawCellWithImage(e, Image.FromFile(appointment.DoctorsInfo.PersonInfo.ImagePath), appointment.DoctorsInfo.PersonInfo.FullName);
+                if (doctorImages.TryGetValue(appointment.DoctorsInfo.PersonInfo.PersonID, out Image doctorImage))
+                {
+                    DrawCellWithImage(e, doctorImage, appointment.DoctorsInfo.PersonInfo.FullName);
+                }
             }
         }
 
@@ -269,7 +219,13 @@ namespace Hospital_Management_System.Appointments
             if (img != null)
             {
                 Rectangle imgRect = new Rectangle(e.CellBounds.Left + 5, e.CellBounds.Top + 5, 30, 30);
-                e.Graphics.DrawImage(img, imgRect);
+                using (GraphicsPath path = new GraphicsPath())
+                {
+                    path.AddEllipse(imgRect);
+                    e.Graphics.SetClip(path);
+                    e.Graphics.DrawImage(img, imgRect);
+                    e.Graphics.ResetClip();
+                }
             }
 
             Rectangle textRect = new Rectangle(e.CellBounds.Left + 40, e.CellBounds.Top, e.CellBounds.Width - 40, e.CellBounds.Height);
@@ -277,8 +233,6 @@ namespace Hospital_Management_System.Appointments
 
             e.Handled = true;
         }
-
-
 
         private void cmsUpdate_Click(object sender, EventArgs e)
         {
@@ -297,26 +251,28 @@ namespace Hospital_Management_System.Appointments
         private void cmsDelete_Click(object sender, EventArgs e)
         {
             GetSelectedAppID();
-            if(MessageBox.Show($"Are You Sure You Want To Cancell Appointment With ID : {_AppID} ?","Confirm",
-                MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show($"Are You Sure You Want To Cancel Appointment With ID : {_AppID} ?", "Confirm",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-
                 if (_AppInfo.UpdateAppointmentStatus(_AppID, clsAppointments.enStatus.CancelledByPatient))
                 {
-                    MessageBox.Show("Appointment Cancelled Successfully", "Cancelled", MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    MessageBox.Show("Appointment Cancelled Successfully", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     _LoadDataToList();
                 }
                 else
-                    MessageBox.Show("Appointment Cancelled Failed", "Error", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                {
+                    MessageBox.Show("Appointment Cancellation Failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
         private void GetSelectedAppID()
         {
-            _AppID = Convert.ToInt32(dgvAppointments.SelectedCells[0].Value);
-            _AppInfo = clsAppointments.FindByAppointmentID(_AppID);
+            if (dgvAppointments.Rows.Count > 0)
+            {
+                _AppID = Convert.ToInt32(dgvAppointments.SelectedCells[0].Value);
+                _AppInfo = clsAppointments.FindByAppointmentID(_AppID);
+            }
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -324,7 +280,7 @@ namespace Hospital_Management_System.Appointments
             if (_AppID == -1)
                 GetSelectedAppID();
 
-            if(clsAppointments.DeleteAppointments(_AppID))
+            if (clsAppointments.DeleteAppointments(_AppID))
             {
                 if (MessageBox.Show($"Are You Sure You Want To Delete This Appointment With ID :[{_AppID}]", "Confirm",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -332,12 +288,11 @@ namespace Hospital_Management_System.Appointments
                     MessageBox.Show("This Appointment Is Deleted Successfully", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     _LoadDataToList();
                 }
-                
-
             }
             else
-                    MessageBox.Show("This Appointment Deleted Failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+            {
+                MessageBox.Show("Appointment Deletion Failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void dgvAppointments_Click(object sender, EventArgs e)
@@ -347,17 +302,25 @@ namespace Hospital_Management_System.Appointments
 
         private void cmsMenuList_Opening(object sender, CancelEventArgs e)
         {
-            if(_AppInfo.AppStatus == clsAppointments.enStatus.CancelledByPatient || _AppInfo.AppStatus == clsAppointments.enStatus.CancelledByDoctor
-                || _AppInfo.AppStatus == clsAppointments.enStatus.Missed || _AppInfo.AppStatus == clsAppointments.enStatus.Confirmed)
+            if(_AppInfo == null)
             {
-                cmsUpdate.Enabled = false;
+                cmsEdit.Enabled = false;
                 cmsCancel.Enabled = false;
                 cmsConfirm.Enabled = false;
+                cmsInfo.Enabled = false;
 
+                return;
+            }
+                if (_AppInfo.AppStatus == clsAppointments.enStatus.CancelledByPatient || _AppInfo.AppStatus == clsAppointments.enStatus.CancelledByDoctor
+                || _AppInfo.AppStatus == clsAppointments.enStatus.Missed || _AppInfo.AppStatus == clsAppointments.enStatus.Confirmed)
+            {
+                cmsEdit.Enabled = false;
+                cmsCancel.Enabled = false;
+                cmsConfirm.Enabled = false;
             }
             else
             {
-                cmsUpdate.Enabled = true;
+                cmsEdit.Enabled = true;
                 cmsCancel.Enabled = true;
                 cmsConfirm.Enabled = true;
             }
@@ -374,8 +337,31 @@ namespace Hospital_Management_System.Appointments
                     _LoadDataToList();
                 }
                 else
-                    MessageBox.Show("Appointment Confirmed Failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                {
+                    MessageBox.Show("Appointment Confirmation Failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
+
+        private void cmsInfo_Click(object sender, EventArgs e)
+        {
+            if(_AppID == -1)
+            {
+            MessageBox.Show("This Appointment Info Does't Exist, Please Try Again Or Call Admin", "Error",
+                   MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            frmAppointmentInfo frm = new frmAppointmentInfo(_AppID);
+            frm.ShowDialog();
+            _LoadDataToList();
+        }
+
+        private void dgvAppointments_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            frmAppointmentInfo frm = new frmAppointmentInfo(_AppID);
+            frm.ShowDialog();
+            _LoadDataToList();
+        }
+       
     }
 }

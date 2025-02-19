@@ -22,6 +22,9 @@ namespace Hospital_Management_System.People.Controls
 
         }
 
+        public delegate void BackAddedPersonID(int PersonID);
+        public BackAddedPersonID addedPersonID;
+
         private clsPeople _Person = null;
         private enum _enMode { enAddNewPerson = 1, enUpdatePerson = 2};
         private _enMode _Mode = _enMode.enAddNewPerson;
@@ -81,7 +84,14 @@ namespace Hospital_Management_System.People.Controls
             Person.Save();
         }
 
-        
+        public delegate bool DelResetControls(Control ctrl);
+
+        private DelResetControls Del;
+        public bool ResetControls(Control ctrl)
+        {
+            ctrl.ResetText();
+            return true;
+        }
 
         private void txtNationNO_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -93,6 +103,20 @@ namespace Hospital_Management_System.People.Controls
         {
             e.Handled = !char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar);
 
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            AddNewPerson(_Person);
+            addedPersonID?.Invoke(_Person.PersonID);
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            foreach (Control control in this.Controls)
+            {
+                Del += ResetControls;
+            }
         }
     }
 }

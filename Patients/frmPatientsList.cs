@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Hospital_Management_System.People.Controls
+namespace Hospital_Management_System.Patients
 {
-    public partial class ctrlPersonInfo : UserControl
+    public partial class frmPatientsList : Form
     {
-        public ctrlPersonInfo()
+        public frmPatientsList()
         {
             InitializeComponent();
         }

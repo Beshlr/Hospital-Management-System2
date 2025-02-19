@@ -1,6 +1,6 @@
 ﻿namespace Hospital_Management_System.Patients
 {
-    partial class frmAddEmergencyContact
+    partial class frmPatientsList
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "frmAddEmergencyContact";
+            this.Text = "frmPatientsList";
         }
 
         #endregion

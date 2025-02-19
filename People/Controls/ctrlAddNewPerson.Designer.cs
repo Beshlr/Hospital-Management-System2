@@ -57,6 +57,8 @@
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.label4 = new System.Windows.Forms.Label();
             this.txtNationNO = new Guna.UI2.WinForms.Guna2TextBox();
+            this.btnSave = new Guna.UI2.WinForms.Guna2Button();
+            this.btnReset = new Guna.UI2.WinForms.Guna2Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
@@ -81,7 +83,7 @@
             // pictureBox6
             // 
             this.pictureBox6.Image = global::Hospital_Management_System.Properties.Resources.PhoneNumber_64;
-            this.pictureBox6.Location = new System.Drawing.Point(432, 149);
+            this.pictureBox6.Location = new System.Drawing.Point(439, 149);
             this.pictureBox6.Name = "pictureBox6";
             this.pictureBox6.Size = new System.Drawing.Size(40, 28);
             this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -133,7 +135,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic);
-            this.label7.Location = new System.Drawing.Point(478, 149);
+            this.label7.Location = new System.Drawing.Point(482, 149);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(103, 17);
             this.label7.TabIndex = 40;
@@ -376,9 +378,10 @@
             // pbxEditPatientImage
             // 
             this.pbxEditPatientImage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbxEditPatientImage.FillColor = System.Drawing.Color.Transparent;
             this.pbxEditPatientImage.Image = global::Hospital_Management_System.Properties.Resources._9055423_bxs_edit_icon__1_;
             this.pbxEditPatientImage.ImageRotate = 0F;
-            this.pbxEditPatientImage.Location = new System.Drawing.Point(957, 298);
+            this.pbxEditPatientImage.Location = new System.Drawing.Point(948, 288);
             this.pbxEditPatientImage.Name = "pbxEditPatientImage";
             this.pbxEditPatientImage.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle;
             this.pbxEditPatientImage.Size = new System.Drawing.Size(42, 40);
@@ -389,6 +392,7 @@
             // 
             // pbxPersonImage
             // 
+            this.pbxPersonImage.ErrorImage = global::Hospital_Management_System.Properties.Resources.Male_512;
             this.pbxPersonImage.Image = global::Hospital_Management_System.Properties.Resources.Male_512;
             this.pbxPersonImage.ImageRotate = 0F;
             this.pbxPersonImage.Location = new System.Drawing.Point(749, 134);
@@ -451,10 +455,49 @@
             this.txtNationNO.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNationNO_KeyPress);
             this.txtNationNO.Validating += new System.ComponentModel.CancelEventHandler(this.CheckEmptyTextBoxs);
             // 
+            // btnSave
+            // 
+            this.btnSave.Animated = true;
+            this.btnSave.AutoRoundedCorners = true;
+            this.btnSave.BorderRadius = 20;
+            this.btnSave.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.btnSave.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.btnSave.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.btnSave.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.btnSave.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.btnSave.ForeColor = System.Drawing.Color.White;
+            this.btnSave.Location = new System.Drawing.Point(687, 347);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(97, 43);
+            this.btnSave.TabIndex = 49;
+            this.btnSave.Text = "Save";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnReset
+            // 
+            this.btnReset.Animated = true;
+            this.btnReset.AutoRoundedCorners = true;
+            this.btnReset.BorderRadius = 20;
+            this.btnReset.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.btnReset.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.btnReset.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.btnReset.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.btnReset.FillColor = System.Drawing.Color.Red;
+            this.btnReset.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.btnReset.ForeColor = System.Drawing.Color.Black;
+            this.btnReset.Location = new System.Drawing.Point(584, 347);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(97, 43);
+            this.btnReset.TabIndex = 50;
+            this.btnReset.Text = "Reset";
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
             // ctrlAddNewPerson
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.txtNationNO);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label8);
@@ -526,5 +569,7 @@
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.Label label4;
         private Guna.UI2.WinForms.Guna2TextBox txtNationNO;
+        private Guna.UI2.WinForms.Guna2Button btnReset;
+        private Guna.UI2.WinForms.Guna2Button btnSave;
     }
 }

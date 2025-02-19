@@ -69,14 +69,20 @@ namespace Hospital_Management_System
         }
 
         private Form activeForm = null;
+
         private void openChildFormInPanel(Form childForm)
         {
             if (activeForm != null)
-                activeForm.Close();
+            {
+                activeForm.Dispose(); 
+            }
+
             activeForm = childForm;
             childForm.TopLevel = false;
             childForm.FormBorderStyle = FormBorderStyle.None;
             childForm.Dock = DockStyle.Fill;
+
+            panelChildForm.Controls.Clear();
             panelChildForm.Controls.Add(childForm);
             panelChildForm.Tag = childForm;
             childForm.BringToFront();
@@ -85,9 +91,37 @@ namespace Hospital_Management_System
 
         private void btnAppointments_Click(object sender, EventArgs e)
         {
-            openChildFormInPanel(new frmAppointments());
+            if (activeForm is frmAppointmentsList)
+                return;
 
+            openChildFormInPanel(new frmAppointmentsList());
             hideSubMenu();
+        }
+
+        private void frmMainForSecretary_Load(object sender, EventArgs e)
+        {
+            if (clsGlobal.CurrentUser.ImagePath != null && clsGlobal.CurrentUser.ImagePath.Length > 0)
+                pbxUserImage.ImageLocation = clsGlobal.CurrentUser.ImagePath;
+            lblUsername.Text = clsGlobal.CurrentUser.UserName;
+        }
+
+        private bool _KeepPanelVisable = false;
+
+        private void pbxUserImage_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        
+
+        private void pnlLoginUserEdit_MouseEnter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pbxUserImage_Click_1(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -63,6 +63,7 @@
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.IO.Pipelines, Version=9.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.IO.Pipelines.9.0.1\lib\net462\System.IO.Pipelines.dll</HintPath>
     </Reference>
@@ -114,11 +115,11 @@
     <Compile Include="Appointments\frmAppointmentInfo.Designer.cs">
       <DependentUpon>frmAppointmentInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="Appointments\frmAppointments.cs">
+    <Compile Include="Appointments\frmAppointmentsList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Appointments\frmAppointments.Designer.cs">
-      <DependentUpon>frmAppointments.cs</DependentUpon>
+    <Compile Include="Appointments\frmAppointmentsList.Designer.cs">
+      <DependentUpon>frmAppointmentsList.cs</DependentUpon>
     </Compile>
     <Compile Include="Doctors\frmAddNewDoctor.cs">
       <SubType>Form</SubType>
@@ -147,29 +148,23 @@
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Patients\frmAddEmergencyContact.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Patients\frmAddEmergencyContact.Designer.cs">
-      <DependentUpon>frmAddEmergencyContact.cs</DependentUpon>
-    </Compile>
     <Compile Include="Patients\frmAddNewPatient.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Patients\frmAddNewPatient.Designer.cs">
       <DependentUpon>frmAddNewPatient.cs</DependentUpon>
     </Compile>
+    <Compile Include="Patients\frmPatientsList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Patients\frmPatientsList.Designer.cs">
+      <DependentUpon>frmPatientsList.cs</DependentUpon>
+    </Compile>
     <Compile Include="People\Controls\ctrlAddNewPerson.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="People\Controls\ctrlAddNewPerson.Designer.cs">
       <DependentUpon>ctrlAddNewPerson.cs</DependentUpon>
-    </Compile>
-    <Compile Include="People\Controls\ctrlPersonInfo.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="People\Controls\ctrlPersonInfo.Designer.cs">
-      <DependentUpon>ctrlPersonInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="People\Controls\ctrlSearchAndListOfPeople.cs">
       <SubType>UserControl</SubType>
@@ -185,8 +180,8 @@
     <EmbeddedResource Include="Appointments\frmAppointmentInfo.resx">
       <DependentUpon>frmAppointmentInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Appointments\frmAppointments.resx">
-      <DependentUpon>frmAppointments.cs</DependentUpon>
+    <EmbeddedResource Include="Appointments\frmAppointmentsList.resx">
+      <DependentUpon>frmAppointmentsList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Doctors\frmAddNewDoctor.resx">
       <DependentUpon>frmAddNewDoctor.cs</DependentUpon>
@@ -203,17 +198,11 @@
     <EmbeddedResource Include="Login\frmLoginScreen.resx">
       <DependentUpon>frmLoginScreen.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Patients\frmAddEmergencyContact.resx">
-      <DependentUpon>frmAddEmergencyContact.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Patients\frmAddNewPatient.resx">
       <DependentUpon>frmAddNewPatient.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="People\Controls\ctrlAddNewPerson.resx">
       <DependentUpon>ctrlAddNewPerson.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="People\Controls\ctrlPersonInfo.resx">
-      <DependentUpon>ctrlPersonInfo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="People\Controls\ctrlSearchAndListOfPeople.resx">
       <DependentUpon>ctrlSearchAndListOfPeople.cs</DependentUpon>
@@ -449,6 +438,51 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\9004715_cross_delete_remove_cancel_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\id.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\field_number.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blood_bag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blood_bag %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\serial_number.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\field_number1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\serial_number1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\blood_bag %281%291.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\paramedics.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\calendar_icon_641.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\status.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\money.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\accountProfileIcon11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\352432_info_icon1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

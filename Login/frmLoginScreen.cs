@@ -15,6 +15,8 @@ namespace Hospital_Management_System.Login
 {
     public partial class frmLoginScreen : Form
     {
+
+        private clsUsers _user = new clsUsers();
         public frmLoginScreen()
         {
             InitializeComponent();
@@ -52,11 +54,18 @@ namespace Hospital_Management_System.Login
         }
         private int Trials = 0;
 
+        private void _SaveLoginLog()
+        {
+            if (!clsLogs.AddNewLogRecord("Login", _user.UserID, DateTime.Now, ""))
+                MessageBox.Show("Can't Save Record Log, Please Try Again Later", "Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+        }
+
         private void btnSignIn_Click(object sender, EventArgs e)
         {
-            clsUsers user = clsUsers.FindByUsernameAndPassword(txtUsername.Text.Trim(), txtPassword.Text.Trim());
+            _user = clsUsers.FindByUsernameAndPassword(txtUsername.Text.Trim(), txtPassword.Text.Trim());
 
-            if (user != null)
+            if (_user != null)
             {
 
                 if (cbxRemeberMe.Checked)
@@ -73,7 +82,7 @@ namespace Hospital_Management_System.Login
                 }
 
                 //incase the user is not active
-                if (!user.IsActive)
+                if (!_user.IsActive)
                 {
 
                     txtUsername.Focus();
@@ -81,14 +90,17 @@ namespace Hospital_Management_System.Login
                     return;
                 }
 
-                clsGlobal.CurrentUser = user;
+                clsGlobal.CurrentUser = _user;
+                
+                //Save Login Log To Database.
+                _SaveLoginLog();
+
                 this.Hide();
                 frmMainForSecretary frm = new frmMainForSecretary(this);
                 frm.ShowDialog();
                 this.Show();
 
-                //MessageBox.Show("Password And Username Are Correct", "Login Success",
-                //    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
             }
             else
             {
